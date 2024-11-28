@@ -15,6 +15,32 @@ namespace ShipBattles
 
         public bool AddShip(Ship ship, bool isHorizontal, int x, int y)
         {
+            if (!CanPlaceShip(ship, isHorizontal, x, y))
+            {
+            return false;
+            }
+            for (int i = 0; i < ship.Length; i++)
+            {
+                if (isHorizontal)
+                {
+                    field[y, x + i] = FieldState.Ship;
+                }
+                else
+                {
+                    field[y + i, x] = FieldState.Ship;
+                }
+            }
+            return true;
+        }
+
+        public bool AddShip (Ship ship, bool isHorizontal, CharCoard x, int y)
+        {
+            return AddShip(ship, isHorizontal, (int)x, y);
+        }
+
+
+        public bool CanPlaceShip(Ship ship, bool isHorizontal, int x, int y)
+        {
             if (isHorizontal && !(y < 9 && x <= 9 - ship.Length))
             {
                 return false;
@@ -23,25 +49,82 @@ namespace ShipBattles
             {
                 return false;
             }
-                for (int i = 0; i < ship.Length; i++)
+
+            for (int i = 0; i < ship.Length; i++)
             {
                 if (isHorizontal)
                 {
-                    field[y, x+i] = FieldState.Ship;
+                    if (!IsFieldArountEmpty(x + i, y))
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
-                    field[y+i, x] = FieldState.Ship;
+                    if (!IsFieldArountEmpty(x, y + i))
+                    {
+                        return false;
+                    }
                 }
             }
-                return true;
+            return true;
+        }
+        public bool Hit(int x, int y)
+        {
+        if (field[y, x] == FieldState.Ship)
+            {
+                field[y, x] = FieldState.Hit;
+            return true;
+            }
+        else if (field[y, x] == FieldState.None)
+            {
+                field[y, x] = FieldState.Miss;
+                return false;
+            }
+        return false;
         }
 
+        public bool Hit(CharCoard x, int y)
+        {
+            return Hit((int)x, y);
+        }
+
+        private bool IsFieldArountEmpty(int x, int y)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    int row = y + i - 1;
+                    int col = x + j - 1;
+
+                    if (row < 0 || row >= 9 ||
+                        col < 0 || col >= 9)
+                    {
+                        continue;
+                    }
+
+                    if (field[row, col] != FieldState.None)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
 
         public void PrintField()
         {
+            Console.Write("  ");
             for (int i = 0; i < 9; i++)
             {
+                char c = (char)('A' + i);
+                Console.Write($"{c} ");
+            }
+            Console.WriteLine();
+            for (int i = 0; i < 9; i++)
+            {
+                Console.Write($"{i+1} ");
                 for (int j = 0; j < 9; j++)
                 {
                     Console.Write(GetStateChar(field[i, j]));
@@ -68,8 +151,6 @@ namespace ShipBattles
             }
         }
 
-
-
         public enum FieldState
         {
             None,
@@ -77,5 +158,17 @@ namespace ShipBattles
             Hit,
             Miss
         }
+    }
+    public enum CharCoard
+    {
+        A,
+        B,
+        C,
+        D,
+        E,
+        F,
+        G,
+        H,
+        I
     }
 }

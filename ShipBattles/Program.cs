@@ -9,9 +9,15 @@
             Ship ship = new Ship(3);
             Ship ship2 = new Ship(2);
 
-            battlefield.AddShip(ship, true, 1, 1);
-            battlefield.AddShip(ship2, false, 4, 6);
-            battlefield.AddShip(ship, true, 6, 8);
+            battlefield.AddShip(ship, true, CharCoard.A, 1);
+            battlefield.AddShip(ship2, false, CharCoard.G, 6);
+            battlefield.AddShip(ship, true, CharCoard.A, 8);
+
+            battlefield.AddShip(ship, false, CharCoard.D, 0);
+
+            battlefield.PrintField();
+
+            battlefield.Hit(CharCoard.A, 1);
 
             battlefield.PrintField();
         }
