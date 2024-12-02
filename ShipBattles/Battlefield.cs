@@ -89,6 +89,34 @@ namespace ShipBattles
             return Hit((int)x, y);
         }
 
+        public static bool TryParse(string input, out int x, out int y)
+        {
+            x = y = 0;
+
+            if (input.Length != 2)
+            {
+                return false;
+            }
+
+            char xChar = input[0];
+            char yChar = input[1];
+
+            if (!char.IsLetter(xChar) && !char.IsDigit(yChar))
+            {
+                return false;
+            }
+            x = xChar - 'A';
+            y = yChar - '1';
+            
+            if (x < 0 || x >= 9 || y < 0 || y >= 9)
+            {
+                x = y = 0;
+                return false;
+            }
+
+            return true;
+        }
+
         private bool IsFieldArountEmpty(int x, int y)
         {
             for (int i = 0; i < 3; i++)
@@ -113,7 +141,7 @@ namespace ShipBattles
             return true;
         }
 
-        public void PrintField()
+        public void PrintField(bool isSecret = false)
         {
             Console.Write("  ");
             for (int i = 0; i < 9; i++)
@@ -127,7 +155,9 @@ namespace ShipBattles
                 Console.Write($"{i+1} ");
                 for (int j = 0; j < 9; j++)
                 {
-                    Console.Write(GetStateChar(field[i, j]));
+                    char stateChar = isSecret ? GetSecretStateChar(field[i, j])
+                        : GetStateChar(field[i, j]);
+                    Console.Write(stateChar);
                     Console.Write(' ');
                 }
                 Console.WriteLine();
@@ -142,6 +172,21 @@ namespace ShipBattles
                     return '.';
                 case FieldState.Ship:
                     return '#';
+                case FieldState.Hit:
+                    return 'X';
+                case FieldState.Miss:
+                    return 'O';
+                default:
+                    return '\0';
+            }
+        }
+        public static char GetSecretStateChar(FieldState state)
+        {
+            switch (state)
+            {
+                case FieldState.None:
+                case FieldState.Ship:
+                    return '.';
                 case FieldState.Hit:
                     return 'X';
                 case FieldState.Miss:

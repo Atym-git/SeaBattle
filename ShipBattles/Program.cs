@@ -17,7 +17,14 @@
 
             battlefield.PrintField();
 
-            battlefield.Hit(CharCoard.A, 1);
+            string input = Console.ReadLine();
+
+            if (Battlefield.TryParse(input.ToUpper(), out int x, out int y))
+            {
+                battlefield.Hit(x, y);
+            }
+
+            //battlefield.Hit(CharCoard.A, 1);
 
             battlefield.PrintField();
         }
